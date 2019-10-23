@@ -3,9 +3,6 @@
 #include <fstream>
 #include <cmath>
 
-#include "maxflow/graph.h"
-
-#include "image.h"
 
 using namespace std;
 using namespace cv;

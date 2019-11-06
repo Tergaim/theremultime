@@ -6,5 +6,5 @@ INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 
 PROJECT(Theremultime)
 
-ADD_EXECUTABLE(exec main.cpp)
+ADD_EXECUTABLE(exec cameraup.cpp)
 TARGET_LINK_LIBRARIES(exec ${OpenCV_LIBS})

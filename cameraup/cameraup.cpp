@@ -14,5 +14,5 @@ int main() {
 		cap >> I;
 		imshow("I",I);
 	}
-	return 1;
+	return 0;
 }

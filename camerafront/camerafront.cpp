@@ -31,7 +31,9 @@ int main() {
 		cap >> frame;
 		GaussianBlur(frame,frame,Size( 5, 5 ),1.0,0);
 		pBackSub -> apply(frame,fgMask);
+		imshow("background subtraction",fgMask);
 		//cvtColor(frame-bgframe,grayframe,COLOR_BGR2GRAY);
+		
 		cvtColor(frame, satframe,COLOR_BGR2HSV);
 		vector<Mat> hsvarray(3);
 		split(satframe, hsvarray);
@@ -61,17 +63,18 @@ int main() {
 		rectangle(frame,Min_Rect,Scalar(0,255,0),2);
 		rectangle(frame,Min_Rect_L,Scalar(255,0,0),2);
 		rectangle(frame,Min_Rect_R,Scalar(0,0,255),2);
-
+		rectangle(fgMask,Min_Rect,Scalar(255,255,255),2);
+		line(fgMask,Point(cutx,0), Point(cutx,fgMask.rows-1), Scalar(255,255,255),2);
 		//Canny(colored,edges,10.0,30.0,3);
 		//GaussianBlur(fgMask,fgMask,Size( 5, 5 ),1.0,0);
 		//cvtColor(satframe,satframe, COLOR_HSV2BGR);
 
 		
-		//imshow("satframe", satframe);
+		imshow("satframe", satframe);
 		//imshow("canny",edges);
 		imshow("frame",frame);
-		//imshow("fgMask",fgMask);
-		//imshow("colored",colored);
+		imshow("fgMask",fgMask);
+		imshow("colored",colored);
 		//imshow("canny",edges);
 	}
 	return 0;

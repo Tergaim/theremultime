@@ -1,21 +1,5 @@
-// bethree.cpp STK tutorial program
-#include "BeeThree.h"
-#include "Clarinet.h"
-#include "RtAudio.h"
+#include "1_sound.hpp"
 using namespace stk;
-// The TickData structure holds all the class instances and data that
-// are shared by the various processing functions.
-struct TickData {
-	Instrmnt *instrument;
-	StkFloat frequency;
-	StkFloat scaler;
-	long counter;
-	bool done;
-	// Default constructor.
-	TickData()
-		: instrument(0), scaler(1.0), counter(0), done( false ) {}
-};
-
 
 // This tick() function handles sample computation only.  It will be
 // called automatically when the system needs a new buffer of audio
@@ -36,10 +20,10 @@ int tick( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 		data->done = true;
 	return 0;
 }
-int main() {
+int lets_sound(int *cam_variables) {
 	// Set the global sample rate and rawwave path before creating class instances.
 	Stk::setSampleRate( 44100.0 );
-	Stk::setRawwavePath( "./rawwaves/" );
+	Stk::setRawwavePath( "../sound/rawwaves/" );
 	TickData data;
 	RtAudio dac = RtAudio();
 	// Figure out how many bytes in an StkFloat and setup the RtAudio stream.
@@ -48,7 +32,6 @@ int main() {
 	parameters.nChannels = 1;
 	RtAudioFormat format = ( sizeof(StkFloat) == 8 ) ? RTAUDIO_FLOAT64 : RTAUDIO_FLOAT32;
 	unsigned int bufferFrames = RT_BUFFER_SIZE;
-	//float gamme[] = {261.0,294.0,330.0,349.0,392.0,440.0,493.0,523.0};
 	float gamme[] = {261.0,261.0,261.0,294.0,330.0,294.0,261.0,330.0,294.0,294.0,261.0};
 	try {
 		dac.openStream( &parameters, NULL, format, (unsigned int)Stk::sampleRate(), &bufferFrames, &tick, (void *)&data );
@@ -58,7 +41,7 @@ int main() {
 		goto cleanup;
 	}
 	try {
-		// Define and load the BeeThree instrument
+		// Define and load the instrument
 		data.instrument = new Clarinet();
 	}
 	catch ( StkError & ) {

@@ -1,22 +1,13 @@
-#include <sstream>
-#include <opencv2/bgsegm.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/videoio.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/video.hpp>
-#include <iostream>
-#include <fstream>
-#include <cmath>
+#include "camerafront.hpp"
 
 
 using namespace std;
 using namespace cv;
 
-void front_cam_run(int *params) {
+void* front_cam_run(void *cam_param) {
 	Ptr<BackgroundSubtractor> pBackSub;
 	pBackSub = createBackgroundSubtractorMOG2(500,8,false);
-
+	int *params = (int*) cam_param;
 	VideoCapture cap(0);
 	Mat bgframe, frame, prevframe, grayframe, satframe, fgMask, edges, colored;
 	Mat frameH, frameS, frameV;
@@ -78,11 +69,13 @@ void front_cam_run(int *params) {
 		imshow("colored",colored);
 		//imshow("canny",edges);
 	}
+
+	return NULL;
 }
 
 
-int main() {
-	int params[4];
-	front_cam_run(params);
-	return 0;
-}
+// int main() {
+// 	int params[4];
+// 	front_cam_run(params);
+// 	return 0;
+// }

@@ -57,8 +57,6 @@ void* front_cam_run(void *cam_param) {
 		line(frame,Point(Min_Rect_L.tl().x,0), Point(Min_Rect_L.tl().x,frame.rows-1), Scalar(255,255,255),2);
 		line(frame,Point(0,Min_Rect_R.br().y), Point(frame.cols,Min_Rect_R.br().y), Scalar(255,255,255),2);
 		//Canny(colored,edges,10.0,30.0,3);
-		params[2]=params[0];
-		params[3]=params[1];
 		params[0]=Min_Rect_L.tl().x;
 		params[1]=Min_Rect_R.br().y;
 		

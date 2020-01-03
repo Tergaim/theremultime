@@ -56,14 +56,13 @@ int lets_sound(int *cam_variables) {
 		error.printMessage();
 		goto cleanup;
 	}
-	for(float freq : gamme) {
-		data.frequency = freq;
+	while(true) {
+		data.frequency = cam_variables[0];
 		data.instrument->noteOn( data.frequency, 0.5 );		
 		// Block waiting until callback signals done.
 		while ( !data.done )
-			Stk::sleep( 100 );
+			Stk::sleep( 20 );
 		data.instrument -> noteOff(1);
-		Stk::sleep( 100 );
 		data.done = false;
 		data.counter = 0;
 	}

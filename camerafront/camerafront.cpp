@@ -13,7 +13,7 @@
 using namespace std;
 using namespace cv;
 
-int main() {
+void front_cam_run(void *params) {
 	Ptr<BackgroundSubtractor> pBackSub;
 	pBackSub = createBackgroundSubtractorMOG2(500,8,false);
 	//pBackSub.setUpdateBackgroundModel(false);
@@ -80,5 +80,11 @@ int main() {
 		//imshow("grey", grayframe);
 
 	}
+}
+
+
+int main() {
+	int params[4];
+	front_cam_run(params);
 	return 0;
 }

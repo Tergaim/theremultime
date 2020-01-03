@@ -1,0 +1,2 @@
+all:
+	g++ -D__LINUX_ALSA__ 1_sound.cpp ADSR.cpp BeeThree.cpp Clarinet.cpp DelayL.cpp Envelope.cpp FileLoop.cpp FileRead.cpp FileWvIn.cpp FM.cpp Noise.cpp OneZero.cpp RtAudio.cpp SineWave.cpp Stk.cpp TwoZero.cpp -lasound -lpthread

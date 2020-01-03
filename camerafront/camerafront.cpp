@@ -31,7 +31,7 @@ int main() {
 		cap >> frame;
 		GaussianBlur(frame,frame,Size( 5, 5 ),1.0,0);
 		pBackSub -> apply(frame,fgMask);
-		imshow("background subtraction",fgMask);
+		//imshow("background subtraction",fgMask);
 		//cvtColor(frame-bgframe,grayframe,COLOR_BGR2GRAY);
 		
 		cvtColor(frame, satframe,COLOR_BGR2HSV);
@@ -70,10 +70,10 @@ int main() {
 		//cvtColor(satframe,satframe, COLOR_HSV2BGR);
 
 		
-		imshow("satframe", satframe);
+		//imshow("satframe", satframe);
 		//imshow("canny",edges);
 		imshow("frame",frame);
-		imshow("fgMask",fgMask);
+		//imshow("fgMask",fgMask);
 		imshow("colored",colored);
 		//imshow("canny",edges);
 	}

@@ -16,7 +16,7 @@ int tick( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 			data->instrument->setFrequency( data->frequency * data->scaler );
 		}
 	}
-	if ( data->counter > 24000 )
+	if ( data->counter > 2400 )
 		data->done = true;
 	return 0;
 }

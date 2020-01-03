@@ -16,7 +16,6 @@ using namespace cv;
 void front_cam_run(void *params) {
 	Ptr<BackgroundSubtractor> pBackSub;
 	pBackSub = createBackgroundSubtractorMOG2(500,8,false);
-	//pBackSub.setUpdateBackgroundModel(false);
 
 	VideoCapture cap(0);
 	Mat bgframe, frame, prevframe, grayframe, satframe, fgMask, edges, colored;
@@ -32,7 +31,6 @@ void front_cam_run(void *params) {
 		GaussianBlur(frame,frame,Size( 5, 5 ),1.0,0);
 		pBackSub -> apply(frame,fgMask);
 		//imshow("background subtraction",fgMask);
-		//cvtColor(frame-bgframe,grayframe,COLOR_BGR2GRAY);
 		
 		cvtColor(frame, satframe,COLOR_BGR2HSV);
 		vector<Mat> hsvarray(3);
@@ -68,8 +66,6 @@ void front_cam_run(void *params) {
 		line(frame,Point(Min_Rect_L.tl().x,0), Point(Min_Rect_L.tl().x,frame.rows-1), Scalar(255,255,255),2);
 		line(frame,Point(0,Min_Rect_R.br().y), Point(frame.cols,Min_Rect_R.br().y), Scalar(255,255,255),2);
 		//Canny(colored,edges,10.0,30.0,3);
-		//GaussianBlur(fgMask,fgMask,Size( 5, 5 ),1.0,0);
-		//cvtColor(satframe,satframe, COLOR_HSV2BGR);
 		params[2]=params[0];
 		params[3]=params[1];
 		params[0]=Min_Rect_L.tl().x;

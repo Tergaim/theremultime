@@ -13,7 +13,7 @@
 using namespace std;
 using namespace cv;
 
-void front_cam_run(void *params) {
+void front_cam_run(int *params) {
 	Ptr<BackgroundSubtractor> pBackSub;
 	pBackSub = createBackgroundSubtractorMOG2(500,8,false);
 

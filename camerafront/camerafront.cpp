@@ -64,11 +64,16 @@ void front_cam_run(void *params) {
 		rectangle(frame,Min_Rect_L,Scalar(255,0,0),2);
 		rectangle(frame,Min_Rect_R,Scalar(0,0,255),2);
 		rectangle(fgMask,Min_Rect,Scalar(255,255,255),2);
-		line(fgMask,Point(cutx,0), Point(cutx,fgMask.rows-1), Scalar(255,255,255),2);
+		//line(fgMask,Point(cutx,0), Point(cutx,fgMask.rows-1), Scalar(255,255,255),2);
+		line(frame,Point(Min_Rect_L.tl().x,0), Point(Min_Rect_L.tl().x,frame.rows-1), Scalar(255,255,255),2);
+		line(frame,Point(0,Min_Rect_R.br().y), Point(frame.cols,Min_Rect_R.br().y), Scalar(255,255,255),2);
 		//Canny(colored,edges,10.0,30.0,3);
 		//GaussianBlur(fgMask,fgMask,Size( 5, 5 ),1.0,0);
 		//cvtColor(satframe,satframe, COLOR_HSV2BGR);
-
+		params[2]=params[0];
+		params[3]=params[1];
+		params[0]=Min_Rect_L.tl().x;
+		params[1]=Min_Rect_R.br().y;
 		
 		//imshow("satframe", satframe);
 		//imshow("canny",edges);

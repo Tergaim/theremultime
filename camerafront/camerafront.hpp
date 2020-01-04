@@ -9,4 +9,6 @@
 #include <fstream>
 #include <cmath>
 
+void set_instrument(int &vertical, int &horizontal, cv::Mat &frame);
+
 void* front_cam_run(void *cam_param);

@@ -32,7 +32,6 @@ int lets_sound(int *cam_variables) {
 	parameters.nChannels = 1;
 	RtAudioFormat format = ( sizeof(StkFloat) == 8 ) ? RTAUDIO_FLOAT64 : RTAUDIO_FLOAT32;
 	unsigned int bufferFrames = RT_BUFFER_SIZE;
-	float gamme[] = {261.0,261.0,261.0,294.0,330.0,294.0,261.0,330.0,294.0,294.0,261.0};
 	try {
 		dac.openStream( &parameters, NULL, format, (unsigned int)Stk::sampleRate(), &bufferFrames, &tick, (void *)&data );
 	}
@@ -57,12 +56,20 @@ int lets_sound(int *cam_variables) {
 		goto cleanup;
 	}
 	while(true) {
-		data.frequency = cam_variables[0];
-		data.instrument->noteOn( data.frequency, 0.5 );		
-		// Block waiting until callback signals done.
-		while ( !data.done )
-			Stk::sleep( 20 );
-		data.instrument -> noteOff(1);
+		std::cout << "valeur cam = " << cam_variables[0] << std::endl;
+		data.frequency = 180 / pow((cam_variables[0]+1)/800., 0.6) - 150;
+		data.frequency = (data.frequency < 55) ? 55 : data.frequency;
+		std::cout << "data.frequency = " << data.frequency << std::endl;
+		float amplitude = cam_variables[1]/800.;
+		amplitude = (amplitude > 1) ? 1 : amplitude;
+		amplitude = (amplitude < 0) ? 0 : amplitude;
+		if(amplitude) {
+			data.instrument->noteOn( data.frequency, amplitude );		
+			// Block waiting until callback signals done.
+			while ( !data.done )
+				Stk::sleep( 20 );
+			data.instrument -> noteOff(1);
+		}
 		data.done = false;
 		data.counter = 0;
 	}

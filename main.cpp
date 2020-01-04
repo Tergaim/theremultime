@@ -11,10 +11,9 @@ using namespace std;
 using namespace cv;
 
 int main() {
-	// coucou
-	int *cam_variables = (int *)malloc(2 * sizeof(int));;
-	cam_variables[0] = 440;
-	cam_variables[1] = 440;
+	int *cam_variables = (int *)malloc(6 * sizeof(int));
+	for(int i=0; i<6; i++)
+		cam_variables[i] = 100;
 	pthread_t camera;
 	pthread_create(&camera, NULL, *front_cam_run, cam_variables);
 	lets_sound(cam_variables);

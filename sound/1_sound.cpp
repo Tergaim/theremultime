@@ -20,7 +20,7 @@ int tick( void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
 		data->done = true;
 	return 0;
 }
-int lets_sound(int *cam_variables) {
+int lets_sound(int *params) {
 	// Set the global sample rate and rawwave path before creating class instances.
 	Stk::setSampleRate( 44100.0 );
 	Stk::setRawwavePath( "../sound/rawwaves/" );
@@ -56,24 +56,32 @@ int lets_sound(int *cam_variables) {
 		goto cleanup;
 	}
 	while(true) {
-		std::cout << "valeur cam = " << cam_variables[0] <<" " << cam_variables[1]<< std::endl;
-		//data.frequency = 180 / pow((cam_variables[0]+1)/800., 0.6) - 150;
+		// Get hand position using mean of last detections
+		const int cam_variables[2] = {(params[0]+params[1]+params[2])/3, (params[3]+params[4]+params[5])/3};
+
+		// Compute frequency using left hand according to the actual theremin formula, and keep it between A0 and A5
 		data.frequency = 180 / pow((cam_variables[0]+1)/800., 0.6) - 150;
 		data.frequency /= 4;
 		data.frequency = (data.frequency < 55) ? 55 : data.frequency;
-		std::cout << "data.frequency = " << data.frequency << std::endl;
-		float amplitude = 1 - cam_variables[1]/800.;
+		data.frequency = (data.frequency > 1760) ? 1760 : data.frequency;
+		// Compute volume using right hand
+		float amplitude = 1 - cam_variables[1]/600.;
 		amplitude = (amplitude > 1) ? 1 : amplitude;
 		amplitude = (amplitude < 0) ? 0 : amplitude;
-		std::cout << "amplitude = " << amplitude << std::endl;
-		if(amplitude && cam_variables[1] < 450) {
+
+		// std::cout << "data.frequency = " << data.frequency << std::endl;
+		// std::cout << "valeur cam = " << cam_variables[0] <<" " << cam_variables[1]<< std::endl;
+		// std::cout << "amplitude = " << amplitude << std::endl;
+
+		// If hands are on screen, play a sound
+		if(amplitude && cam_variables[1] > 0 && cam_variables[0] > 0) {
 			data.instrument->noteOn( data.frequency, amplitude );		
 			// Block waiting until callback signals done.
 			while ( !data.done )
 				Stk::sleep( 20 );
 			data.instrument -> noteOff(1);
 		} else {
-			Stk::sleep(40);
+			Stk::sleep(20);
 		}
 		data.done = false;
 		data.counter = 0;

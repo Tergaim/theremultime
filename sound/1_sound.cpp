@@ -63,12 +63,14 @@ int lets_sound(int *cam_variables) {
 		float amplitude = 1 - cam_variables[1]/800.;
 		amplitude = (amplitude > 1) ? 1 : amplitude;
 		amplitude = (amplitude < 0) ? 0 : amplitude;
-		if(amplitude) {
+		if(amplitude && cam_variables[1] < 0.9) {
 			data.instrument->noteOn( data.frequency, amplitude );		
 			// Block waiting until callback signals done.
 			while ( !data.done )
 				Stk::sleep( 20 );
 			data.instrument -> noteOff(1);
+		} else {
+			Stk::sleep(40);
 		}
 		data.done = false;
 		data.counter = 0;

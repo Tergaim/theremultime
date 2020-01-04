@@ -41,7 +41,7 @@ int lets_sound(int *cam_variables) {
 	}
 	try {
 		// Define and load the instrument
-		data.instrument = new Clarinet();
+		data.instrument = new Clarinet(55);
 	}
 	catch ( StkError & ) {
 		goto cleanup;
@@ -56,14 +56,17 @@ int lets_sound(int *cam_variables) {
 		goto cleanup;
 	}
 	while(true) {
-		std::cout << "valeur cam = " << cam_variables[0] << std::endl;
+		std::cout << "valeur cam = " << cam_variables[0] <<" " << cam_variables[1]<< std::endl;
+		//data.frequency = 180 / pow((cam_variables[0]+1)/800., 0.6) - 150;
 		data.frequency = 180 / pow((cam_variables[0]+1)/800., 0.6) - 150;
+		data.frequency /= 4;
 		data.frequency = (data.frequency < 55) ? 55 : data.frequency;
 		std::cout << "data.frequency = " << data.frequency << std::endl;
 		float amplitude = 1 - cam_variables[1]/800.;
 		amplitude = (amplitude > 1) ? 1 : amplitude;
 		amplitude = (amplitude < 0) ? 0 : amplitude;
-		if(amplitude && cam_variables[1] < 0.9) {
+		std::cout << "amplitude = " << amplitude << std::endl;
+		if(amplitude && cam_variables[1] < 450) {
 			data.instrument->noteOn( data.frequency, amplitude );		
 			// Block waiting until callback signals done.
 			while ( !data.done )

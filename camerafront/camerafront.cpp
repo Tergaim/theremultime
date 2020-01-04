@@ -28,7 +28,7 @@ void* front_cam_run(void *cam_param) {
 		split(satframe, hsvarray);
 		hsvarray[1] *= 1.5;
 		merge(hsvarray, satframe);
-		inRange(satframe, Scalar(0, 00, 000), Scalar(40, 40, 100), colored);
+		inRange(satframe, Scalar(90, 20, 100), Scalar(110, 200, 255), colored);
 		fgMask = min(fgMask,colored);
 
 		Mat Points, PointsL, PointsR;

@@ -60,7 +60,7 @@ int lets_sound(int *cam_variables) {
 		data.frequency = 180 / pow((cam_variables[0]+1)/800., 0.6) - 150;
 		data.frequency = (data.frequency < 55) ? 55 : data.frequency;
 		std::cout << "data.frequency = " << data.frequency << std::endl;
-		float amplitude = 1 - cam_variables[1]/800.;
+		float amplitude = cam_variables[1]/800.;
 		amplitude = (amplitude > 1) ? 1 : amplitude;
 		amplitude = (amplitude < 0) ? 0 : amplitude;
 		if(amplitude) {

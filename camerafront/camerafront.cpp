@@ -5,12 +5,13 @@ using namespace std;
 using namespace cv;
 
 void* front_cam_run(void *cam_param) {
-	Ptr<BackgroundSubtractor> pBackSub;
+	Ptr<BackgroundSubtractorMOG2> pBackSub;
 	pBackSub = createBackgroundSubtractorMOG2(500,8,false);
 	int *params = (int*) cam_param;
 	VideoCapture cap(0);
 	Mat bgframe, frame, prevframe, grayframe, satframe, fgMask, edges, colored;
 	Mat frameH, frameS, frameV;
+	Mat se1,se2;
 	cap >> bgframe;
 	int k, cutx;
 	while( (k = waitKey(20)) != 32){
@@ -21,15 +22,22 @@ void* front_cam_run(void *cam_param) {
 		cap >> frame;
 		GaussianBlur(frame,frame,Size( 5, 5 ),1.0,0);
 		pBackSub -> apply(frame,fgMask);
-		//imshow("background subtraction",fgMask);
+		imshow("background subtraction",fgMask);
 		
 		cvtColor(frame, satframe,COLOR_BGR2HSV);
 		vector<Mat> hsvarray(3);
+
 		split(satframe, hsvarray);
 		hsvarray[1] *= 1.5;
 		merge(hsvarray, satframe);
-		inRange(satframe, Scalar(90, 20, 100), Scalar(110, 200, 255), colored);
+		inRange(satframe, Scalar(95, 50, 100), Scalar(105, 255, 255), colored);
 		fgMask = min(fgMask,colored);
+		imshow("before se",fgMask);
+		se1 = getStructuringElement(MORPH_RECT, Size(4,4));
+		se2 = getStructuringElement(MORPH_RECT, Size(2,2));
+		morphologyEx(fgMask, fgMask, MORPH_OPEN, se2);
+		imshow("after opening",fgMask);
+		morphologyEx(fgMask, fgMask, MORPH_CLOSE, se1);
 
 		Mat Points, PointsL, PointsR;
 		findNonZero(fgMask,Points);
@@ -56,14 +64,14 @@ void* front_cam_run(void *cam_param) {
 		//line(fgMask,Point(cutx,0), Point(cutx,fgMask.rows-1), Scalar(255,255,255),2);
 		line(frame,Point(Min_Rect_L.tl().x,0), Point(Min_Rect_L.tl().x,frame.rows-1), Scalar(255,255,255),2);
 		line(frame,Point(0,Min_Rect_R.br().y), Point(frame.cols,Min_Rect_R.br().y), Scalar(255,255,255),2);
-		//Canny(colored,edges,10.0,30.0,3);
+		//Canny(fgMask,edges,10.0,30.0,3);
 		params[0]=Min_Rect_L.tl().x;
 		params[1]=Min_Rect_R.br().y;
 		
 		//imshow("satframe", satframe);
 		//imshow("canny",edges);
 		imshow("frame",frame);
-		//imshow("fgMask",fgMask);
+		imshow("fgMask",fgMask);
 		imshow("colored",colored);
 		//imshow("canny",edges);
 	}

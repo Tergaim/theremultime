@@ -11,6 +11,7 @@ using namespace std;
 using namespace cv;
 
 int main() {
+	// coucou
 	int *cam_variables = (int *)malloc(2 * sizeof(int));;
 	cam_variables[0] = 440;
 	cam_variables[1] = 440;

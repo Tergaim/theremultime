@@ -10,61 +10,61 @@ int openSize=2, closeSize=4; //2,4
 
 void set_instrument(int &vertical, int &horizontal, Mat &frame) {
 	int n_pass = 10;
-	int n_begin = n_pass;
 	float ratio[n_pass+1];
-	Mat pattern[2], pattern_gray[2], frame_gray, resizedframe[n_pass+1];
+	Mat pattern[2], pattern_gray[2], frame_gray, resizedpattern[2][n_pass+1];
 	pattern[0] = imread("../pattern1.jpg");
 	pattern[1] = imread("../pattern2.jpg");
 	
+	// Convert frame and pattern to grey and resize pattern to different scales
 	cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
 	Canny(frame_gray, frame_gray, 30, 90);
-	for(int i = n_pass; i>0; i--) {
-		ratio[i] = float(i)/n_pass;
-		int newX = ratio[i] * frame.rows;
-		int newY = ratio[i] * frame.cols;
-		resize(frame_gray, resizedframe[i], Size(newY,newX));
-		n_pass = i+1;
-		if (newX < pattern[0].rows || newX < pattern[1].rows || newY < pattern[0].cols || newY < pattern[1].cols) {
-			break;
-		}
-	}
 	for(int i = 0; i<2; i++) {
 		cvtColor(pattern[i], pattern_gray[i], COLOR_BGR2GRAY);
-		Canny(pattern_gray[i], pattern[i], 30, 90);
 	}
+
+	for(int j = 0; j<2; j++) {
+		for(int i = n_pass; i>0; i--) {
+			ratio[i] = float(i)/n_pass;
+			int newX = ratio[i] * pattern[j].rows;
+			int newY = ratio[i] * pattern[j].cols;
+			resize(pattern_gray[j], resizedpattern[j][i], Size(newY,newX));
+			// We want to perform template matching on the edges so that it is less color-dependant
+			Canny(resizedpattern[j][i], resizedpattern[j][i], 30, 90);
+		}
+	}
+
+
 	int maxCoords[2][2];
 	for(int j = 0; j<2; j++) {
 		float maxValEver = 0;
-		for(int i = n_begin; i>n_pass; i--){
+		for(int i = n_pass; i>0; i--){
+			// Perform template matching search
 			Mat result;
-			int result_cols =  resizedframe[i].cols - pattern[j].cols + 1;
-			int result_rows = resizedframe[i].rows - pattern[j].rows + 1;
+			int result_cols =  frame_gray.cols - resizedpattern[j][i].cols + 1;
+			int result_rows = frame_gray.rows - resizedpattern[j][i].rows + 1;
 			result.create(result_rows, result_cols, CV_32FC1);
 
 			double minVal; double maxVal; Point minLoc; Point maxLoc;
-			matchTemplate(resizedframe[i], pattern[j], result, 5);
-			//normalize(result, result, 0, 1, NORM_MINMAX, -1, Mat());
+			matchTemplate(frame_gray, resizedpattern[j][i], result, 3);
 			minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc, Mat());
+			// Update best detection
 			if(maxVal > maxValEver) {
 				cout << 100*j+i << " " << maxVal << " " << ratio[i] << endl;
 				maxValEver = maxVal;
-				maxCoords[j][0] = maxLoc.x / ratio[i];
-				maxCoords[j][1] = maxLoc.y / ratio[i];
+				maxCoords[j][0] = maxLoc.x / ratio[i] + resizedpattern[j][i].cols/2.0;
+				maxCoords[j][1] = maxLoc.y / ratio[i] + resizedpattern[j][i].rows/2.0;
 			}
 		}
 	}
-	maxCoords[0][0] += pattern[0].rows;
-	maxCoords[0][1] += pattern[0].cols;
-	maxCoords[1][1] += pattern[1].cols;	
-	maxCoords[1][0] += pattern[1].rows;
 	// Get y coordinate of upper left pattern
 	vertical = (maxCoords[0][0] > maxCoords[1][0]) ? maxCoords[1][1] : maxCoords[0][1];
 	// Get x coordinate of down right pattern
 	horizontal = (maxCoords[0][1] > maxCoords[1][1]) ? maxCoords[1][0] : maxCoords[0][0];
 	
-	circle(frame, Point(maxCoords[0][0], maxCoords[0][1]), 3, Scalar(255,0,0));
-	circle(frame, Point(maxCoords[1][0], maxCoords[1][1]), 3, Scalar(255,0,0));
-	imshow("Theremultime Demo2",frame);
+	// following lines for visualization purposes 
+	//circle(frame, Point(maxCoords[0][0], maxCoords[0][1]), 3, Scalar(0,0,250), 10);
+	//circle(frame, Point(maxCoords[1][0], maxCoords[1][1]), 3, Scalar(0,0,250), 10);
+	//imshow("Theremultime Demo2",frame);
 }
 
 void setOpen(int, void*){
@@ -88,9 +88,11 @@ void* front_cam_run(void *cam_param) {
 	Mat frameH, frameS, frameV;
 	Mat se1,se2;
 	int k, cutx;
-	for(int i=0; i<20; i++)
-		cap >> frame;
+
+	// Perform template matching for detecting
+	cap >> frame;
 	set_instrument(params[7], params[8], frame);
+
 	namedWindow("Theremultime Demo", WINDOW_FULLSCREEN);
 
 	char H1Tb[50];
@@ -107,8 +109,13 @@ void* front_cam_run(void *cam_param) {
 	createTrackbar(CloseTb,"Theremultime Demo", &closeSize, 20, setClose);
 
 	while( (k = waitKey(20)) != 32){
+
 		if(k == 115){ //if S key pressed
+			// Perform template matching for detecting, takes 1-2 sec to perform.
+			cap >> frame;
+			set_instrument(params[7], params[8], frame);
 		}
+
 		cap >> frame;
 		//Denoise image
 		GaussianBlur(frame,frame,Size( 5, 5 ),1.0,0);

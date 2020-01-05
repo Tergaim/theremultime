@@ -12,8 +12,8 @@ void set_instrument(int &vertical, int &horizontal, Mat &frame) {
 	int n_pass = 10;
 	float ratio[n_pass+1];
 	Mat pattern[2], pattern_gray[2], frame_gray, resizedpattern[2][n_pass+1];
-	pattern[0] = imread("../pattern1.jpg");
-	pattern[1] = imread("../pattern2.jpg");
+	pattern[0] = imread("../pattern_1.jpg");
+	pattern[1] = imread("../pattern_2.jpg");
 	
 	// Convert frame and pattern to grey and resize pattern to different scales
 	cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
